@@ -46,29 +46,36 @@ class GitHubIssue extends Component {
   }
 }
 
-function IssueList(props) {
-  if(props.issues === undefined) {
-    return <ul></ul>;
+class IssueList extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {activeIssueId: -1};	  
   }
-  if(props.issues.length === 0) {
-    return <p>No issues</p>;
+
+  activeIssue(issueId) {
+    this.setState({activeIssueId: issueId});
   }
-  return <ul className="App-issue-list">
-	  {props.issues.map((issue) => <Issue key={issue.id} issue={issue}></Issue>)}
+  render() {
+    if(this.props.issues === undefined) {
+      return <ul></ul>;
+    }
+    if(this.props.issues.length === 0) {
+      return <p>No issues</p>;
+    }
+    return <ul className="App-issue-list">
+	  {this.props.issues.map((issue, index) => 
+		  <Issue key={issue.id} issue={issue} active={this.state.activeIssueId === issue.id} onClick={() => this.activeIssue(issue.id)} />)}
 	</ul>;
+  }
 
 }
 
 function Issue(props) {
-  function hightLightIssue(e){
-    var allSibling = e.target.parentElement.children;
-    for(var sibling of allSibling) {
-      sibling.className =  "App-Issue-Item-Unclicked";
-    }
-    e.target.className  = "App-Issue-Item-Clicked";
+  let className = "App-Issue-Item-Unclicked";
+  if(props.active) {
+    className = "App-Issue-Item-Clicked";
   }
-
-  return <li className="App-Issue-Item-Unclicked" onClick={hightLightIssue}>#{props.issue.id} - {props.issue.title}</li>;
+  return <li className={className} onClick={props.onClick}>#{props.issue.id} - {props.issue.title}</li>;  
 }
 
 function NextButton(props) {
