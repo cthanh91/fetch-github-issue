@@ -1,17 +1,12 @@
-# Base Image
-FROM node:alpine
+FROM node:alpine as builder
 
-# Woring directory
-WORKDIR /usr/app/
+WORKDIR /usr/app
 
-# Install dependencies
-COPY ./package.json ./
+COPY package.json .
 RUN npm install
-COPY ./ ./
-RUN npm install -g serve
+COPY . .
 
-# Build project
 RUN npm run build
 
-# Startup command
-CMD ["serve", "build"]
+FROM nginx
+COPY --from=builder /usr/app/build /usr/share/nginx/html
