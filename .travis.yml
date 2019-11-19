@@ -1,0 +1,9 @@
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t git-issue -f Dockerfile.dev .
+
+script:
+  - docker run git-issue npm run test -- --coverage
